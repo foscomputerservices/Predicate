@@ -129,16 +129,16 @@ public extension Value {
         
         switch self {
         case .null: return nil
-        case let .string(value):    return value as NSString
-        case let .data(value):      return value as NSData
-        case let .date(value):      return value as NSDate
-        case let .bool(value):      return value as NSNumber
-        case let .int16(value):     return value as NSNumber
-        case let .int32(value):     return value as NSNumber
-        case let .int64(value):     return value as NSNumber
-        case let .float(value):     return value as NSNumber
-        case let .double(value):    return value as NSNumber
-        case let .collection(value): return value.map({ $0.toFoundation() }) as NSArray
+        case let .string(value):    return NSString(string: value)
+        case let .data(value):      return NSData(data: value)
+        case let .date(value):      return NSDate(timeIntervalSince1970: value.timeIntervalSince1970)
+        case let .bool(value):      return NSNumber(value: value)
+        case let .int16(value):     return NSNumber(value: value)
+        case let .int32(value):     return NSNumber(value: value)
+        case let .int64(value):     return NSNumber(value: value)
+        case let .float(value):     return NSNumber(value: value)
+        case let .double(value):    return NSNumber(value: value)
+        case let .collection(value): return NSArray(array: value.map({ $0.toFoundation() ?? NSNull() }))
         }
     }
 }
