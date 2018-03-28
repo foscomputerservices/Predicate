@@ -12,8 +12,8 @@ import XCTest
 final class PredicateTests: XCTestCase {
     
     class Person: NSObject {
-        var id: Int
-        var name: String
+        @objc var id: Int
+        @objc var name: String
         init(id: Int, name: String) {
             self.id = id
             self.name = name
@@ -22,10 +22,10 @@ final class PredicateTests: XCTestCase {
     }
     
     class Event: NSObject {
-        var id: Int
-        var name: String
-        var start: Date
-        var speakers: Set<Person>
+        @objc var id: Int
+        @objc var name: String
+        @objc var start: Date
+        @objc var speakers: Set<Person>
         init(id: Int, name: String, start: Date, speakers: Set<Person>) {
             self.id = id
             self.name = name
@@ -107,4 +107,27 @@ final class PredicateTests: XCTestCase {
         XCTAssert(nsPredicate.evaluate(with: events[0]))
         XCTAssert((events as NSArray).filtered(using: nsPredicate).count == events.count)
     }
+    
+    func testLinuxTestSuiteIncludesAllTests() {
+        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+            let thisClass = type(of: self)
+            let linuxCount = thisClass.allTests.count
+            
+            #if swift(>=4.0)
+                let darwinCount = thisClass.defaultTestSuite.testCaseCount
+            #else
+                let darwinCount = Int(thisClass.defaultTestSuite().testCaseCount)
+            #endif
+            
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from allTests")
+        #endif
+    }
+    
+    static var allTests = [
+        ("testLinuxTestSuiteIncludesAllTests", testLinuxTestSuiteIncludesAllTests),
+        ("testPredicate1", testPredicate1),
+        ("testPredicate2", testPredicate2),
+        ("testPredicate3", testPredicate3),
+        ("testPredicate4", testPredicate4),
+    ]
 }

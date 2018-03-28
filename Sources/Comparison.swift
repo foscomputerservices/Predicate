@@ -97,17 +97,28 @@ extension Comparision: CustomStringConvertible {
         let leftExpression = "\(self.expression.left)"
         
         let type = self.type.rawValue
-        
+
+#if swift(>=4.0)
+        let options = self.options.isEmpty ? "" : "[" + self.options
+            .sorted(by: { $0.rawValue < $1.rawValue })
+            .reduce("") { $0 + $1.rawValue }
+            + "]"
+#else
         let options = self.options.isEmpty ? "" : "[" + self.options
             .sorted(by: { $0.0.rawValue < $0.1.rawValue })
             .reduce("") { $0.0 + $0.1.rawValue }
             + "]"
+#endif
         
         let rightExpression = "\(self.expression.right)"
         
         let components = [modifier, leftExpression, type + options, rightExpression]
         
+#if swift(>=4.0)
+        return components.reduce("") { $0 + "\($0.isEmpty ? "" : " ")" + $1 }
+#else
         return components.reduce("") { $0.0 + "\($0.0.isEmpty ? "" : " ")" + $0.1 }
+#endif
     }
 }
 

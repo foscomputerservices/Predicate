@@ -53,7 +53,11 @@ public extension Comparision {
     
     func toFoundation() -> NSComparisonPredicate {
         
+#if swift(>=4.0)
+        let options = self.options.reduce(NSComparisonPredicate.Options(), { $0.union($1.toFoundation()) })
+#else
         let options = self.options.reduce(NSComparisonPredicate.Options(), { $0.0.union($0.1.toFoundation()) })
+#endif
         
         return NSComparisonPredicate(leftExpression: expression.left.toFoundation(),
                                      rightExpression: expression.right.toFoundation(),
